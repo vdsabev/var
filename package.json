@@ -1,11 +1,11 @@
 {
-  "name": "envjs",
+  "name": "var",
   "description": "Use strongly typed environment variables like a boss",
-  "keywords": ["process", "environment", "env"],
+  "keywords": ["process", "environment", "env", "variables", "var"],
   "version": "0.0.1",
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
-  "repository": "git://github.com/vdsabev/envjs",
-  "main": "./lib/envjs/env.js",
+  "repository": "git://github.com/vdsabev/varjs",
+  "main": "./env.js",
   "dependencies": {
     "lodash": "1.2.0"
   }
