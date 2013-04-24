@@ -39,7 +39,10 @@ _.each(cfg, function (options, key) {
 
   if (options.default || options[env.NODE_ENV]) {
     var defaultValueKey = options.default ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
+    if (typeof options[defaultValueKey] === 'undefined' && !options.required) return; // Don't enforce convertion
+
     _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
+
     var converter = converters[options.type];
     if (!converter) throw new Error('Unsupported type: ' + type);
 
