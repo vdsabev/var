@@ -6,8 +6,8 @@ var _ = require('lodash'),
 
 var converters = {
   string: { // Any object that implements toString except ''
-    parse: function (x) { return x && x.toString() },
-    validate: function (x) { return x && _.isString(x) }
+    parse: function (x) { return x != null && x.toString() },
+    validate: function (x) { return _.isString(x) }
   },
   number: { // Numbers and strings that can be parsed into numbers
     parse: parseFloat,
@@ -37,9 +37,9 @@ _.extend(env, process.env);
 _.each(cfg, function (options, key) {
   if (!_.isObject(options)) options = { default: options }; // Shorthand notation
 
-  if (options.default || options[env.NODE_ENV]) {
-    var defaultValueKey = options.default ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
-    if (typeof options[defaultValueKey] === 'undefined' && !options.required) return; // Don't enforce convertion
+  if (options.default !== undefined || options[env.NODE_ENV]) {
+    var defaultValueKey = options.default !== undefined ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
+    if (options[defaultValueKey] === undefined && !options.required) return; // Don't enforce convertion
 
     _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
 
