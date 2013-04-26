@@ -5,12 +5,11 @@ Use strongly typed environment variables like a boss:
 
     npm install var
 
-And then in Node:
+Then create a file named **env.json** in your root folder. It will contain default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading the env.json file will take precedence**, but will be converted and validated according to the corresponding type parsed from the **env.json** file.
+
+And in Node just use **env** instead of **process.env**:
 
     var env = require('var');
-
-
-But first create a file named **env.json** in your root folder. It will contain default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading env.json file will take precedence**, but will be converted and validated according to the corresponding type parsed from the **env.json** file.
 
 **Warning:** some Node hosting providers don't support spaces in environment variables. You are free to use spaces in **env.json** though.
 
@@ -57,7 +56,7 @@ Or if you want to be somewhat cryptic:
         "default": "1.618"
       }
 
-Floats are parsed just fine without the quotes and type specification.
+But you don't need to to that, floats are parsed just fine without the quotes and type specification.
 
 What if you don't want a default value, just a strongly typed setting you can depend on:
 
@@ -126,7 +125,7 @@ But what about different environments:
 
 This sets a default value in development, but throws an error if **sessionSecret** is not defined in the production configuration. Failing to do so often results in the encryption algorithm failing.
 
-You can use anything for an environment name, except **type** and **default**:
+You can use anything for an environment name, except **type**, **default** and **required**:
 
       "logLevel": {
         "development": 3,
