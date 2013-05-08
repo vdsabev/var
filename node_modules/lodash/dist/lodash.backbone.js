@@ -1,6 +1,6 @@
 /**
  * @license
- * Lo-Dash 1.2.0 (Custom Build) <http://lodash.com/>
+ * Lo-Dash 1.2.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash backbone exports="amd,commonjs,global,node" -o ./dist/lodash.backbone.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>
  * Based on Underscore.js 1.4.4 <http://underscorejs.org/>
@@ -222,14 +222,6 @@
     var object = { '0': 1, 'length': 1 };
 
     /**
-     * Detect if `arguments` objects are `Object` objects (all but Narwhal and Opera < 10.5).
-     *
-     * @memberOf _.support
-     * @type Boolean
-     */
-    support.argsObject = arguments.constructor == Object && !(arguments instanceof Array);
-
-    /**
      * Detect if `Function#bind` exists and is inferred to be fast (all but V8).
      *
      * @memberOf _.support
@@ -422,6 +414,26 @@
       return value ? hasOwnProperty.call(value, 'callee') : false;
     };
   }
+
+  /**
+   * Checks if `value` is an array.
+   *
+   * @static
+   * @memberOf _
+   * @category Objects
+   * @param {Mixed} value The value to check.
+   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
+   * @example
+   *
+   * (function() { return _.isArray(arguments); })();
+   * // => false
+   *
+   * _.isArray([1, 2, 3]);
+   * // => true
+   */
+  var isArray = nativeIsArray || function(value) {
+    return value ? (typeof value == 'object' && toString.call(value) == arrayClass) : false;
+  };
 
   /**
    * A fallback implementation of `Object.keys` which produces an array of the
@@ -761,26 +773,6 @@
   }
 
   /**
-   * Checks if `value` is an array.
-   *
-   * @static
-   * @memberOf _
-   * @category Objects
-   * @param {Mixed} value The value to check.
-   * @returns {Boolean} Returns `true`, if the `value` is an array, else `false`.
-   * @example
-   *
-   * (function() { return _.isArray(arguments); })();
-   * // => false
-   *
-   * _.isArray([1, 2, 3]);
-   * // => true
-   */
-  var isArray = nativeIsArray || function(value) {
-    return toString.call(value) == arrayClass;
-  };
-
-  /**
    * Checks if `value` is empty. Arrays, strings, or `arguments` objects with a
    * length of `0` and objects with no own enumerable properties are considered
    * "empty".
@@ -973,7 +965,7 @@
   // fallback for older versions of Chrome and Safari
   if (isFunction(/x/)) {
     isFunction = function(value) {
-      return toString.call(value) == funcClass;
+      return typeof value == 'function' && toString.call(value) == funcClass;
     };
   }
 
@@ -1019,7 +1011,7 @@
    * // => true
    */
   function isRegExp(value) {
-    return toString.call(value) == regexpClass;
+    return value ? (objectTypes[typeof value] && toString.call(value) == regexpClass) : false;
   }
 
   /**
@@ -3095,7 +3087,7 @@
    * @memberOf _
    * @type String
    */
-  lodash.VERSION = '1.2.0';
+  lodash.VERSION = '1.2.1';
 
   // add functions to `lodash.prototype`
   mixin(lodash);
