@@ -5,13 +5,17 @@ Use strongly typed environment variables like a boss:
 
     npm install var
 
-Then create a file named **env.json** in your root folder. It will contain default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading the env.json file will take precedence**, but will be converted and validated according to the corresponding type parsed from the **env.json** file.
+Then create a file named **env.json** in your root folder. It will contain default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading the env.json file will take precedence**, but will be converted and validated according to the corresponding type inferred from the **env.json** file.
 
-And in Node just use **env** instead of **process.env**:
+Finally, just require the package, assign it to a variable and use that instead of **process.env**:
 
     var env = require('var');
 
-**Warning:** some Node hosting providers don't support spaces in environment variables. You are free to use spaces in **env.json** though.
+**Any variables that aren't defined in process.env will receive the raw, unparsed value from the env.json file**. This allows you, among other things, to set node-specific variables like **NODE_ENV** (useful in **Express**) or **TZ** from **env.json**.
+
+**Warning:** **process.env** can only hold string values. That's the very reason this package exists.
+
+**Warning:** some Node hosting providers don't support using spaces in environment variables through their web interface. You are free to use spaces in **env.json** though.
 
 Supported types
 ===============

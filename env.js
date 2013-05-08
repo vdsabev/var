@@ -37,20 +37,22 @@ _.extend(env, process.env);
 _.each(cfg, function (options, key) {
   if (!_.isObject(options)) options = { default: options }; // Shorthand notation
 
-  var defaultValueIsDefined = options.default !== undefined || options[env.NODE_ENV] !== undefined;
-  var environmentValueIsDefined = process.env[key] !== undefined;
-  if (defaultValueIsDefined || environmentValueIsDefined) {
+  var processValueIsDefined = process.env[key] !== undefined;
+  var defaultValueIsDefined = options.default !== undefined;
+  var environmentValueIsDefined = options[env.NODE_ENV] !== undefined;
+  if (processValueIsDefined || defaultValueIsDefined || environmentValueIsDefined) {
     var value;
-    if (defaultValueIsDefined) {
-      var defaultValueKey = options.default !== undefined ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
+    if (processValueIsDefined) {
+      _.defaults(options, { type: 'string' }); // Default type to string if necessary
+      value = process.env[key];
+    }
+    else if (defaultValueIsDefined || environmentValueIsDefined) { // The condition is just for clarity, it's always true
+      var defaultValueKey = environmentValueIsDefined ? env.NODE_ENV : 'default'; // Use corresponding key to get default value
       if (options[defaultValueKey] === undefined && !options.required) return; // Don't enforce convertion
 
       _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
-      value = environmentValueIsDefined ? process.env[key] : options[defaultValueKey];
-    }
-    else if (environmentValueIsDefined) {
-      _.defaults(options, { type: 'string' }); // Infer type from default value if necessary
-      value = process.env[key];
+      value = options[defaultValueKey];
+      process.env[key] = value; // Put the value into process.env
     }
 
     var converter = converters[options.type];
