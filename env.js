@@ -37,16 +37,25 @@ _.extend(env, process.env);
 _.each(cfg, function (options, key) {
   if (!_.isObject(options)) options = { default: options }; // Shorthand notation
 
-  if (options.default !== undefined || options[env.NODE_ENV]) {
-    var defaultValueKey = options.default !== undefined ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
-    if (options[defaultValueKey] === undefined && !options.required) return; // Don't enforce convertion
+  var defaultValueIsDefined = options.default !== undefined || options[env.NODE_ENV] !== undefined;
+  var environmentValueIsDefined = process.env[key] !== undefined;
+  if (defaultValueIsDefined || environmentValueIsDefined) {
+    var value;
+    if (defaultValueIsDefined) {
+      var defaultValueKey = options.default !== undefined ? 'default' : env.NODE_ENV; // Use corresponding key to get default value
+      if (options[defaultValueKey] === undefined && !options.required) return; // Don't enforce convertion
 
-    _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
+      _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
+      value = environmentValueIsDefined ? process.env[key] : options[defaultValueKey];
+    }
+    else if (environmentValueIsDefined) {
+      _.defaults(options, { type: 'string' }); // Infer type from default value if necessary
+      value = process.env[key];
+    }
 
     var converter = converters[options.type];
-    if (!converter) throw new Error('Unsupported type: ' + type);
+    if (!converter) throw new Error('Unsupported type: ' + options.type);
 
-    var value = process.env[key] ? process.env[key] : options[defaultValueKey];
     var parsedValue = converter.parse.call(env, value); // Call with env to allow for variable interdependency
     if (converter.validate && !converter.validate(parsedValue)) throw new Error('Invalid value: ' + value);
 
