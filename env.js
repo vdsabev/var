@@ -5,7 +5,7 @@ var _ = require('lodash'),
     env = module.exports = {};
 
 var converters = {
-  string: { // Any object that implements toString except ''
+  string: { // Any object that implements toString
     parse: function (x) { return x != null && x.toString() },
     validate: function (x) { return _.isString(x) }
   },
