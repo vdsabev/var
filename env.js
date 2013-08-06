@@ -42,16 +42,25 @@ _.each(cfg, function (options, key) {
   var environmentValueIsDefined = options[env.NODE_ENV] !== undefined;
   if (processValueIsDefined || defaultValueIsDefined || environmentValueIsDefined) {
     var value;
-    if (processValueIsDefined) {
-      _.defaults(options, { type: 'string' }); // Default type to string if necessary
+    var defaultValueKey = environmentValueIsDefined ? env.NODE_ENV : 'default'; // Use corresponding key to get default value
+    if (processValueIsDefined) { // Values from process.env take precedence over env.json
+      if (options.type === undefined) {
+        var defaultValue = options[defaultValueKey];
+        if (defaultValue !== undefined) { // Infer type from default value
+          options.type = typeof defaultValue;
+        }
+        else { // process.env can only contain strings anyway
+          options.type = 'string';
+        }
+      }
       value = process.env[key];
     }
     else if (defaultValueIsDefined || environmentValueIsDefined) { // The condition is just for clarity, it's always true
-      var defaultValueKey = environmentValueIsDefined ? env.NODE_ENV : 'default'; // Use corresponding key to get default value
-      if (options[defaultValueKey] === undefined && !options.required) return; // Don't enforce convertion
-
-      _.defaults(options, { type: typeof options[defaultValueKey] }); // Infer type from default value if necessary
       value = options[defaultValueKey];
+
+      if (value === undefined && !options.required) return; // Don't enforce convertion
+
+      _.defaults(options, { type: typeof value }); // Infer type from default value if necessary
       process.env[key] = value; // Put the value into process.env
     }
 
