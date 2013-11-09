@@ -25,6 +25,10 @@ var converters = {
     parse: function (x) { return new Date(x) },
     validate: _.isDate
   },
+  object: { // Parse JSON objects
+    parse: JSON.parse,
+    validate: _.isObject
+  },
   function: { // Any valid JavaScript expression; "this" refers to env
     parse: function (x) { return eval(x) }
   }
@@ -67,7 +71,9 @@ _.each(cfg, function (options, key) {
     var converter = converters[options.type];
     if (!converter) throw new Error('Unsupported type: ' + options.type);
 
-    var parsedValue = converter.parse.call(env, value); // Call with env to allow for variable interdependency
+    var parsedValue = _.isString(value) ?
+                        converter.parse.call(env, value) : // Call with env to allow for variable interdependency
+                        value; // Only parse the value if it's a string that could've come from process.env
     if (converter.validate && !converter.validate(parsedValue)) throw new Error('Invalid value: ' + value);
 
     env[key] = parsedValue;

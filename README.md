@@ -24,6 +24,7 @@ Supported types
 - number
 - boolean
 - date
+- object (including arrays)
 - function
 
 Configuration
@@ -89,10 +90,28 @@ Just use anything that returns a valid date after being called with new Date():
         "default": "1899-12-31"
       }
 
+Objects and Arrays
+-----
+
+You can have complex object hierarchies in your configuration:
+
+      "log": {
+        "production": {
+          "console": "error",
+          "loggly": ["info", "error"],
+          "mail": "alert"
+        },
+        "default": {
+          "console": ["info", "error"],
+          "loggly": ["info", "error"],
+          "mail": ["error", "alert"]
+        }
+      }
+
 Functions
 -------
 
-Let's try something more sophisticated:
+Let's try something even more advanced:
 
       "maxSessionLength": {
         "type": "function",
@@ -106,16 +125,16 @@ Or why not be a bit more dynamic:
         "default": "30 * 24 * this.maxSessionLength"
       }
 
-Yes, **this** refers to the already parsed environment variables, so order is important. And you didn't hope circular references would work, did you?
+Yes, **this** refers to all environment variables that have already been parsed, so order is important.
 
-Let's see another example:
+Your function can contain anything, but bear in mind that the string is evaluated and immediately returned to save you some writing in the most common use cases. However, if you need to do some complex calculation, you still can by using an in-place function:
 
-      "version": {
+      "today": {
         "type": "function",
-        "default": "new Date().getTime()"
-      }
+        "default": "(function () { var now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()) }())"
+      },
 
-**Warning:** Functions aren't strongly typed, so if you wanted to set the value to a string in your server configuration, you can.
+**Warning:** Functions aren't strongly typed, so you can use anything.
 
 Enviroments
 -----------
