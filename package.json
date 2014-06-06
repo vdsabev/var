@@ -1,12 +1,23 @@
 {
   "name": "var",
   "description": "Use strongly typed environment variables like a boss",
-  "keywords": ["process", "environment", "env", "variables", "var"],
-  "version": "0.0.8",
+  "keywords": [
+    "process",
+    "environment",
+    "env",
+    "variables",
+    "var"
+  ],
+  "version": "0.1.0",
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
   "repository": "git://github.com/vdsabev/var",
   "main": "./env.js",
   "dependencies": {
-    "lodash": "1.x.x"
+    "lodash": "x.x.x"
+  },
+  "devDependencies": {
+    "async": "~0.9.0",
+    "cli-table": "~0.3.0",
+    "should": "~4.0.1"
   }
 }
