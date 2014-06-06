@@ -1,0 +1,5 @@
+env.json
+tests
+test.js
+.gitignore
+.npmignore
