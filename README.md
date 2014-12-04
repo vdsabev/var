@@ -5,17 +5,19 @@ Use strongly typed environment variables like a boss:
 
     npm install var
 
-Then create a file named **env.json** in your root folder. It will contain default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading the env.json file will take precedence**, but will be converted and validated according to the corresponding type inferred from the **env.json** file.
+Then create a file named `env.json` in your root folder, or if you want a different path for your configuration file, you can set it via the `ENV_VAR_CONFIG_FILE` environment variable.
 
-Finally, just require the package, assign it to a variable and use that instead of **process.env**:
+Your configuration contains default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading `env.json` will take precedence**, but will be converted and validated according to the corresponding type defined in `env.json`.
+
+Finally, just require the package, assign it to a variable and use that instead of `process.env`:
 
     var env = require('var');
 
-**Any variables that aren't defined in process.env will receive the raw, unparsed value from the env.json file**. This allows you, among other things, to set node-specific variables like **NODE_ENV** (useful in **Express**) or **TZ** from **env.json**.
+**Any variables that aren't defined in process.env will receive the raw, unparsed value from `env.json`**. This allows you, among other things, to set node-specific variables like `NODE_ENV` (useful in `Express`) or `TZ` from `env.json`.
 
-**Warning:** **process.env** can only hold string values. That's the very reason this package exists.
+**Warning:** `process.env` can only hold string values. That's the main reason this package exists.
 
-**Warning:** some Node hosting providers don't support using spaces in environment variables through their web interface. You are free to use spaces in **env.json** though.
+**Warning:** some Node hosting providers don't support using spaces in environment variables through their web interface. You are free to use spaces in `env.json` though.
 
 Supported types
 ===============
@@ -69,7 +71,7 @@ What if you don't want a default value, just a strongly typed setting you can de
         "type": "number"
       }
 
-Unless you set the **required** setting to true, the presence of the variable is optional.
+Unless you set the `required` setting to true, the presence of the variable is optional.
 
 Boolean
 -------
@@ -78,7 +80,7 @@ It's as simple as that:
 
       "gzip": true
 
-But even if you set it to the string **"false"** in your server configuration, the type will still be inferred from the **env.json** settings, so env.gzip would evaluate to the boolean **false**, not to the string **"false"**.
+But even if you set it to the string `"false"` in your server configuration, the type will still be inferred from the `env.json` settings, so `env.gzip` would evaluate to the boolean `false`, not to the string `"false"`.
 
 Dates
 -----
@@ -125,7 +127,7 @@ Or why not be a bit more dynamic:
         "default": "30 * 24 * this.maxSessionLength"
       }
 
-Yes, **this** refers to all environment variables that have already been parsed, so order is important.
+Yes, `this` refers to all environment variables that have already been parsed, so order is important.
 
 Your function can contain anything, but bear in mind that the string is evaluated and immediately returned to save you some writing in the most common use cases. However, if you need to do some complex calculation, you still can by using an in-place function:
 
@@ -134,7 +136,7 @@ Your function can contain anything, but bear in mind that the string is evaluate
         "default": "(function () { var now = new Date(); return new Date(now.getFullYear(), now.getMonth(), now.getDate()) }())"
       },
 
-**Warning:** Functions aren't strongly typed, so you can use anything.
+**Warning:** Functions aren't strongly typed, so they can return values of different types.
 
 Enviroments
 -----------
@@ -142,17 +144,18 @@ Enviroments
 But what about different environments:
 
       "sessionSecret": {
-        "development": "my secret key",
+        "development": "not so secret",
         "required": true
       }
 
-This sets a default value in development, but throws an error if **sessionSecret** is not defined in the production configuration. Failing to do so often results in the encryption algorithm failing.
+Your session encryption algorithm would fail if you didn't pass a valid value to it. This sets a default value in development, but throws an error if `sessionSecret` is not defined in other environments.
 
-You can use anything for an environment name, except **type**, **default** and **required**:
+You can use anything as an environment name, except `type`, `default` and `required`:
 
       "logLevel": {
         "development": 3,
         "test": 2,
+        "staging": 1,
         "production": 1,
         "default": 0
       }

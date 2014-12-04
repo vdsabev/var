@@ -1,17 +1,20 @@
+'use strict';
+
 var _ = require('lodash'),
     fs = require('fs'),
     path = require('path'),
-    cfg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'env.json'), 'utf8')),
-    env = module.exports = {};
+    env = module.exports = {},
+    cfgFilePath = path.join(process.cwd(), (process.env.ENV_VAR_CONFIG_FILE || 'env.json')),
+    cfg = JSON.parse(fs.readFileSync(cfgFilePath), 'utf8');
 
 var converters = {
   string: { // Any object that implements toString
-    parse: function (x) { return x != null && x.toString() },
-    validate: function (x) { return _.isString(x) }
+    parse: function (x) { return x != null && x.toString(); },
+    validate: function (x) { return _.isString(x); }
   },
   number: { // Numbers and strings that can be parsed into numbers
     parse: parseFloat,
-    validate: function (x) { return !isNaN(x) }
+    validate: function (x) { return !isNaN(x); }
   },
   boolean: { // true, false, 'true' and 'false'
     parse: function (x) {
@@ -22,7 +25,7 @@ var converters = {
     validate: _.isBoolean
   },
   date: { // Any string for which new Date() will return a valid date
-    parse: function (x) { return new Date(x) },
+    parse: function (x) { return new Date(x); },
     validate: _.isDate
   },
   object: { // Parse JSON objects
@@ -30,7 +33,7 @@ var converters = {
     validate: _.isObject
   },
   function: { // Any valid JavaScript expression; "this" refers to env
-    parse: function (x) { return eval(x) }
+    parse: function (x) { return eval(x); } // jshint ignore: line
   }
 };
 
@@ -69,12 +72,12 @@ _.each(cfg, function (options, key) {
     }
 
     var converter = converters[options.type];
-    if (!converter) throw new Error('Unsupported type: ' + options.type);
+    if (!converter) throw new Error('Unsupported type for ' + key + ': ' + options.type);
 
     var parsedValue = _.isString(value) ?
                         converter.parse.call(env, value) : // Call with env to allow for variable interdependency
                         value; // Only parse the value if it's a string that could've come from process.env
-    if (converter.validate && !converter.validate(parsedValue)) throw new Error('Invalid value: ' + value);
+    if (converter.validate && !converter.validate(parsedValue)) throw new Error('Invalid value for ' + key + ': ' + value);
 
     env[key] = parsedValue;
   }

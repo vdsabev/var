@@ -1,76 +1,39 @@
+// npm install -g nodeunit
+// nodeunit test.js
+
 var _ = require('lodash'),
-    async = require('async'),
-    Table = require('cli-table'),
-    should = require('should');
+    env = require('./env');
 
-// Declare utility functions
-String.prototype.repeat = function (count) {
-  return new Array(count + 1).join(this);
+module.exports = {
+  'Strings': function (test) {
+    test.ok(_.isString(env.NODE_ENV));
+    test.ok(_.isString(env.TZ));
+    test.ok(_.isString(env.sessionSecret));
+    test.done();
+  },
+  'Numbers': function (test) {
+    test.ok(_.isNumber(env.port));
+    test.ok(_.isNumber(env.pageSize));
+    test.ok(_.isUndefined(env.limit));
+    test.ok(_.isNumber(env.logLevel));
+    test.done();
+  },
+  'Booleans': function (test) {
+    test.ok(_.isBoolean(env.gzip));
+    test.done();
+  },
+  'Dates': function (test) {
+    test.ok(_.isDate(env.minDate));
+    test.done();
+  },
+  'Objects': function (test) {
+    test.ok(_.isObject(env.log));
+    test.done();
+  },
+  'Functions': function (test) {
+    test.ok(_.isNumber(env.maxSessionLength));
+    test.ok(_.isNumber(env.maxExtendedSessionLength));
+    test.ok(_.isDate(env.today));
+    test.done();
+  }
 };
-
-// Include test files
-var tests = {};
-var path = './tests';
-_.each(require('fs').readdirSync(path), function (file) {
-  tests[file] = require(path + '/' + file);
-});
-
-// Start tests
-var table = new Table({ chars: { 'mid': '', 'left-mid': '', 'mid-mid': '', 'right-mid': '' } });
-var results = { passed: 0, failed: 0, skipped: 0 };
-async.series(_.map(tests, function (test, file) {
-  return function (next) {
-    table.push([file + ':', '']);
-    execute(next, test);
-  };
-}), function (error) {
-  if (error) throw new Error(error);
-
-  table.push(['', '']);
-  table.push(['PASSED:', results.passed]);
-  table.push(['FAILED:', results.failed]);
-  table.push(['SKIPPED:', results.skipped]);
-  console.log(table.toString());
-
-  process.exit(0);
-});
-
-function execute(next, test, key, indent) {
-  if (key !== undefined) { // Log test structure
-    if (isNaN(indent)) indent = 2;
-
-    if (!_.isFunction(test)) {
-      table.push([' '.repeat(indent) + key + ':', '']);
-    }
-  }
-
-  if (_.isFunction(test)) { // Execute test
-    try {
-      test(function (status) {
-        if (status === 'skip') {
-          table.push([' '.repeat(indent) + key, '?']);
-          results.skipped++;
-        }
-        else {
-          table.push([' '.repeat(indent) + key, '✓']);
-          results.passed++;
-        }
-
-        next();
-      });
-    }
-    catch (error) {
-      table.push([' '.repeat(indent) + key, error && error.message || error || 'unknown error']);
-      results.failed++;
-      next();
-    }
-  }
-  else if (_.isObject(test)) {
-    async.series(_.map(test, function (child, key) {
-      return function (next) {
-        execute(next, child, key, indent + 2);
-      };
-    }), next);
-  }
-  else return next('INVALID TEST FILE STRUCTURE');
-}

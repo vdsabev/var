@@ -6,18 +6,14 @@
     "environment",
     "env",
     "variables",
+    "variable",
     "var"
   ],
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
   "repository": "git://github.com/vdsabev/var",
   "main": "./env.js",
   "dependencies": {
     "lodash": "x.x.x"
-  },
-  "devDependencies": {
-    "async": "~0.9.0",
-    "cli-table": "~0.3.0",
-    "should": "~4.0.1"
   }
 }

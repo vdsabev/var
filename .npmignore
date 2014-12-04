@@ -1,5 +1,5 @@
-env.json
-tests
-test.js
 .gitignore
+.jshintrc
 .npmignore
+env.json
+test.js
