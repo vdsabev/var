@@ -13,6 +13,9 @@
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
   "repository": "git://github.com/vdsabev/var",
   "main": "./env.js",
+  "scripts": {
+    "test": "nodeunit test.js"
+    },
   "dependencies": {
     "lodash": "x.x.x"
   }

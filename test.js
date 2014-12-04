@@ -1,5 +1,5 @@
 // npm install -g nodeunit
-// nodeunit test.js
+// npm test
 
 var _ = require('lodash'),
     env = require('./env');
