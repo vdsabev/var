@@ -1,3 +1,6 @@
+# 0.1.3 (2015-01-23)
+* Log errors and exit the process instead of throwing exceptions to avoid showing the stack, which is too verbose
+
 # 0.1.2 (2015-01-23)
 * Fixed encoding when reading the configuration file
 
