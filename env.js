@@ -5,7 +5,7 @@ var _ = require('lodash'),
     path = require('path'),
     env = module.exports = {},
     cfgFilePath = path.join(process.cwd(), (process.env.ENV_VAR_CONFIG_FILE || 'env.json')),
-    cfg = JSON.parse(fs.readFileSync(cfgFilePath), 'utf8');
+    cfg = JSON.parse(fs.readFileSync(cfgFilePath, 'utf8'));
 
 var converters = {
   string: { // Any object that implements toString
