@@ -1,11 +1,11 @@
 'use strict';
 
-var _ = require('lodash'),
-    fs = require('fs'),
-    path = require('path'),
-    env = module.exports = {},
-    cfgFilePath = path.join(process.cwd(), (process.env.ENV_VAR_CONFIG_FILE || 'env.json')),
-    cfg = JSON.parse(fs.readFileSync(cfgFilePath, 'utf8'));
+var _ = require('lodash');
+var fs = require('fs');
+var path = require('path');
+var env = module.exports = {
+  getConfigFromFile: getConfigFromFile
+};
 
 var converters = {
   string: { // Any object that implements `toString`
@@ -41,7 +41,43 @@ var converters = {
 _.extend(env, process.env);
 
 // Parse environment variables from `env.json`
-_.each(cfg, function (options, key) {
+var config = getConfigFromFile(process.env.ENV_VAR_CONFIG_FILE || 'env.json');
+_.each(config, parseAndSetEnvironmentVariableOptions);
+
+function getConfigFromFile(fileName) {
+  var configFilePath = path.join(process.cwd(), fileName);
+
+  var configFileContent;
+  try {
+    configFileContent = fs.readFileSync(configFilePath, 'utf8');
+  }
+  catch (error) {
+    if (error.code === 'ENOENT') {
+      console.error('File not found: \'' + configFilePath + '\'! Continuing...');
+    }
+    else {
+      throw error;
+    }
+  }
+
+  var parsedConfig;
+  if (configFileContent) {
+    try {
+      parsedConfig = JSON.parse(configFileContent);
+    }
+    catch (error) {
+      console.error(error && error.message || error);
+    }
+  }
+
+  if (!parsedConfig) {
+    parsedConfig = {};
+  }
+
+  return parsedConfig;
+}
+
+function parseAndSetEnvironmentVariableOptions(options, key) {
   if (!_.isObject(options)) options = { default: options }; // Shorthand notation
 
   var processValueIsDefined = process.env[key] !== undefined;
@@ -91,4 +127,4 @@ _.each(cfg, function (options, key) {
     console.error('Required environment variable `' + key + '`');
     process.exit(1);
   }
-});
+}
