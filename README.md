@@ -9,7 +9,7 @@ Then create a file named `env.json` in your root folder, or if you want a differ
 
 Your configuration contains default values and simple validation rules for your environment variables. **Any environment variables defined prior to reading `env.json` will take precedence**, but will be converted and validated according to the corresponding type defined in `env.json`.
 
-Finally, just require the package, assign it to a variable and use that instead of `process.env`:
+Finally, require the package, assign it to a variable and use that instead of `process.env`:
 
     var env = require('var');
 
@@ -50,7 +50,7 @@ Just slap some numbers:
 
       "port": 3000
 
-That was still a default value, just a shorthand for:
+That was still a default value, shorthand for:
 
       "pageSize": {
         "default": 10
@@ -85,7 +85,7 @@ But even if you set it to the string `"false"` in your server configuration, the
 Dates
 -----
 
-Just use anything that returns a valid date after being called with new Date():
+Use anything that returns a valid date after being called with new Date():
 
       "minDate": {
         "type": "date",
