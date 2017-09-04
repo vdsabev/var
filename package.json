@@ -9,7 +9,7 @@
     "variable",
     "var"
   ],
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
   "repository": "git://github.com/vdsabev/var",
   "main": "./env.js",
@@ -17,9 +17,9 @@
     "test": "nodeunit test.js"
   },
   "dependencies": {
-    "lodash": "^4.15.0"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
-    "nodeunit": "^0.9.1"
+    "nodeunit": "^0.11.1"
   }
 }
