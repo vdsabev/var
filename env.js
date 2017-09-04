@@ -2,7 +2,9 @@
 
 var _ = require('lodash');
 var fs = require('fs');
-var path = require('path');
+
+var paths = require('./paths');
+
 var env = module.exports = {
   getConfigFromFile: getConfigFromFile
 };
@@ -41,11 +43,11 @@ var converters = {
 _.extend(env, process.env);
 
 // Parse environment variables from `env.json`
-var config = getConfigFromFile(process.env.ENV_VAR_CONFIG_FILE || 'env.json');
+var config = getConfigFromFile(paths.CONFIG);
 _.each(config, parseAndSetEnvironmentVariableOptions);
 
 function getConfigFromFile(fileName) {
-  var configFilePath = path.join(process.cwd(), fileName);
+  var configFilePath = paths.get(fileName);
 
   var configFileContent;
   try {
