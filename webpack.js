@@ -9,7 +9,10 @@ const envKeys = Object.keys(require(paths.get(paths.CONFIG)));
  *   const env = require('var');
  *   const { define } = require('var/webpack');
  * Then in your webpack plugins:
- *   new webpack.DefinePlugin(define(env, (envJsonKeys) => ['NODE_ENV', ...envJsonKeys]))
+ *   new webpack.DefinePlugin({
+ *     'process.env.NODE_ENV': JSON.stringify(production ? 'production' : 'development'),
+ *     ...define(env)
+ *   })
  * And you get:
  *   {
  *     'process.env.NODE_ENV': '"development"',
@@ -18,7 +21,7 @@ const envKeys = Object.keys(require(paths.get(paths.CONFIG)));
  */
 exports.define = (env, getKeys, prefix = 'process.env.') => {
   const result = {};
-  const keys = getKeys(envKeys);
+  const keys = typeof getKeys === 'function' ? getKeys(envKeys) : envKeys;
 
   for (const key of keys) {
     result[`${prefix}${key}`] = JSON.stringify(env[key]);

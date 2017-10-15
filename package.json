@@ -9,7 +9,7 @@
     "variable",
     "var"
   ],
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "Vladimir Sabev (https://github.com/vdsabev)",
   "repository": "git://github.com/vdsabev/var",
   "main": "./env.js",
